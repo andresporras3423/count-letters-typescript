@@ -1,8 +1,7 @@
-import { start } from "repl";
-
 let { Config_game } = require('./classes/config_game');
 let { Config_game_data } = require('./data/config_game_data');
- 
+let _prompt = require('prompt-sync')();
+
 let conf_data = new Config_game_data();
 let conf: typeof Config_game;
 function start_main(){
@@ -17,6 +16,8 @@ function options(){
               2) setting
               3) game feedback
               4) exit`);
+              let variable = _prompt();
+              console.log(variable);       
 }
 
 start_main();
