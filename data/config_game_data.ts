@@ -5,15 +5,17 @@ export class Config_game_data{
     constructor(){
 
     }
-    get_config_data(): Config_game | null{
+     async get_config_data(): Promise<any>{
         let c = new Connection();
-        c.client.connect();
-        let conf: Config_game | null = null;
-        c.client.query('select * from config_game', (err: any, res: any) => {
-            if(err) console.log(err);
-            else conf = new Config_game(res.rows[0].val,res.rows[1].val,res.rows[2].val);
-            c.client.end();
-        });
-        return conf;
+        let promise = new Promise((resolve, reject) => {
+            c.client.connect();
+            c.client.query('select * from config_game', async (err: any, res: any) => {
+                if(err) console.log(err);
+                c.client.end();
+                resolve(res.rows);
+            });
+          });
+        let resolved:any = await promise;
+        return new Config_game(resolved[0].val,resolved[1].val,resolved[2].val);
     }
 }
