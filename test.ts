@@ -1,15 +1,19 @@
 import { Config_game_data } from "./data/config_game_data";
 import { Scores_data } from "./data/scores_data";
+import { Questions_data } from "./data/questions_data";
 import { Config_game } from "./classes/config_game";
 import { Scores } from "./classes/scores";
+import { Questions } from "./classes/questions";
 
 let prompt_sync = require('prompt-sync')();
 let conf_data: Config_game_data;
 let scores_data: Scores_data;
+let questions_data: Questions_data;
 let conf: Config_game;
 async function start_main(){
   conf_data  = new Config_game_data();
   scores_data  = new Scores_data();
+  questions_data  = new Questions_data();
   conf = await conf_data.get_config_data();
   console.log("WELCOME");
   options();
@@ -28,17 +32,17 @@ async function options(){
               else console.log("Bye bye!");     
 }
 
-function play_exam(){
+async function play_exam(){
   let sols:  number = 0;
   let initial: Date = new Date();
   for(let i:number=0; i< conf.questions; i++){
     console.log(`Question N°${i+1}`);
-    if(question()) sols++;
+    if(await question()) sols++;
   }
   end_game(sols, initial);
 }
 
-function question(): boolean{
+async function question(): Promise<Boolean>{
   let alphabet: string[] = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
   let subAlphabet: string[] =[];
   let sol:number=0;
@@ -62,10 +66,13 @@ function question(): boolean{
   console.log(word);
   let answer: number = parseInt(prompt_sync());
   let correct:boolean= answer===sol;
+  let nQuestion:Questions = new Questions(subAlphabet[0], correct);
+  let x = await questions_data.save_question(nQuestion);
   if(correct) console.log("correct");
   else console.log("incorrect, the solution was "+sol);
   return correct;
 }
+
 
 async function end_game(sols:number, initial:Date){
   let final: Date = new Date();
