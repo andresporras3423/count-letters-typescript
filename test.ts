@@ -66,19 +66,26 @@ function question(): boolean{
   return correct;
 }
 
-function end_game(sols:number, initial:Date){
+async function end_game(sols:number, initial:Date){
   let final: Date = new Date();
   let diff: number = Math.round((final.valueOf() - initial.valueOf())/1000);
-  save_final_score(sols, diff);
+  let idScore:number = parseInt(await save_final_score(sols, diff));
+  let position:number = parseInt(await get_position(idScore));
   console.log(`Correct questions: ${sols}/${conf.questions}`);
   console.log(`Time: ${diff} seconds`);
   console.log(`Score: ${diff*(conf.questions-sols+1)}`);
+  console.log(`Position: ${position}`);
 }
 
-async function save_final_score(sols:number, diff:number){
-let nScore:Scores = new Scores(conf.questions, conf.letters, diff, sols);
-let idCreated:number = parseInt(await scores_data.add_score(nScore));
-console.log(`created id was: ${idCreated}`);
+async function save_final_score(sols:number, diff:number): Promise<any>{
+    let nScore:Scores = new Scores(conf.questions, conf.letters, diff, sols);
+    let idCreated:number = parseInt(await scores_data.add_score(nScore));
+    return idCreated;
+}
+
+async function get_position(id:number): Promise<any>{
+  let position:number = parseInt(await scores_data.get_score_position(id));
+  return position;
 }
 
 function settings(){

@@ -18,4 +18,20 @@ export class Scores_data{
         let saved_id:any = await promise;
         return saved_id;
     }
+
+    async get_score_position(id:number): Promise<any>{
+        let c = new Connection();
+        let promise = new Promise((resolve, reject) => {
+            c.client.connect();
+            c.client.query(`select num from 
+            (select id, ROW_NUMBER() OVER(partition by questions, letters order by seconds*(questions+1-corrects)) as num 
+            from scores) as sorted where id=${id}`, async (err: any, res: any) => {
+                if(err) console.log(err);
+                c.client.end();
+                resolve(res.rows[0]['num']);
+            });
+          });
+        let saved_id:any = await promise;
+        return saved_id;
+    }
 }
