@@ -104,8 +104,8 @@ async function feedback(){
   console.log("6) Recent corrects");
   console.log("7) Back to the main menu");
   let opt: string = prompt_sync();
-  if(opt==="1") await show_top_similars();
-  else if(opt==="2") settings(); 
+  if(opt==="1") await show_top_scores();
+  else if(opt==="2") await show_top_recents(); 
   else if(opt==="3") feedback();
   else if(opt==="4") feedback();
   else if(opt==="5") feedback();
@@ -119,9 +119,14 @@ async function feedback(){
   feedback();
 }
 
-async function show_top_similars(){
-  let list_similars: string = await scores_data.show_top_similars(conf.questions, conf.letters)+"";
+async function show_top_scores(){
+  let list_similars: string = await scores_data.show_top_scores(conf.questions, conf.letters)+"";
   console.log(list_similars);
+}
+
+async function show_top_recents(){
+  let list_recents: string = await scores_data.show_top_recents(conf.questions, conf.letters)+"";
+  console.log(list_recents);
 }
 
 start_main();

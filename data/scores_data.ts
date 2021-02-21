@@ -35,7 +35,7 @@ export class Scores_data{
         return saved_id;
     }
 
-    async show_top_similars(questions:number, letters:number): Promise<any>{
+    async show_top_scores(questions:number, letters:number): Promise<any>{
         let c = new Connection();
         let promise = new Promise((resolve, reject) => {
             c.client.connect();
@@ -51,7 +51,28 @@ export class Scores_data{
         let rows:any = await promise;
         let top_list:string="";
         for(let i:number=0; i< rows.length; i++){
-            top_list+=`${i+1}) score: ${rows[i]['score']}, questions: ${rows[i]['questions']}, corrects: ${rows[i]['corrects']}, seconds: ${rows[i]['seconds']}, date: ${rows[i]['date']}\n`;   
+            top_list+=`${i+1}) score: ${rows[i]['score']}, questions: ${rows[i]['questions']}, corrects: ${rows[i]['corrects']}, seconds: ${rows[i]['seconds']}, date: ${rows[i]['daytime']}\n`;   
+        }
+        return top_list;
+    }
+
+    async show_top_recents(questions:number, letters:number): Promise<any>{
+        let c = new Connection();
+        let promise = new Promise((resolve, reject) => {
+            c.client.connect();
+            c.client.query(`select (seconds*(questions+1-corrects)) as score, 
+            questions, corrects, seconds, daytime from scores 
+            where questions=${questions} and letters=${letters}
+            order by daytime desc limit 10`, async (err: any, res: any) => {
+                if(err) console.log(err);
+                c.client.end();
+                resolve(res.rows);
+            });
+          });
+        let rows:any = await promise;
+        let top_list:string="";
+        for(let i:number=0; i< rows.length; i++){
+            top_list+=`${i+1}) score: ${rows[i]['score']}, questions: ${rows[i]['questions']}, corrects: ${rows[i]['corrects']}, seconds: ${rows[i]['seconds']}, date: ${rows[i]['daytime']}\n`;   
         }
         return top_list;
     }
