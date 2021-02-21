@@ -1,11 +1,15 @@
 import { Config_game_data } from "./data/config_game_data";
+import { Scores_data } from "./data/scores_data";
 import { Config_game } from "./classes/config_game";
-let prompt_sync = require('prompt-sync')();
+import { Scores } from "./classes/scores";
 
+let prompt_sync = require('prompt-sync')();
 let conf_data: Config_game_data;
+let scores_data: Scores_data;
 let conf: Config_game;
 async function start_main(){
   conf_data  = new Config_game_data();
+  scores_data  = new Scores_data();
   conf = await conf_data.get_config_data();
   console.log("WELCOME");
   options();
@@ -65,9 +69,16 @@ function question(): boolean{
 function end_game(sols:number, initial:Date){
   let final: Date = new Date();
   let diff: number = Math.round((final.valueOf() - initial.valueOf())/1000);
+  save_final_score(sols, diff);
   console.log(`Correct questions: ${sols}/${conf.questions}`);
   console.log(`Time: ${diff} seconds`);
   console.log(`Score: ${diff*(conf.questions-sols+1)}`);
+}
+
+async function save_final_score(sols:number, diff:number){
+let nScore:Scores = new Scores(conf.questions, conf.letters, diff, sols);
+let idCreated:number = parseInt(await scores_data.add_score(nScore));
+console.log(`created id was: ${idCreated}`);
 }
 
 function settings(){
