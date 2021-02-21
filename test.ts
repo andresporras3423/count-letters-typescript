@@ -15,16 +15,17 @@ async function start_main(){
   options();
 };
 
-function options(){
+async function options(){
   console.log(`Please choose an option
-              1) play
-              2) setting
-              3) game feedback
-              4) exit`);
+  1) play
+  2) setting
+  3) game feedback
+  4) exit`);
               let opt: string = prompt_sync();
               if(opt==="1") play_exam();
               else if(opt==="2") settings(); 
-              else if(opt==="3") feedback();      
+              else if(opt==="3") await feedback(); 
+              else console.log("Bye bye!");     
 }
 
 function play_exam(){
@@ -75,10 +76,11 @@ async function end_game(sols:number, initial:Date){
   console.log(`Time: ${diff} seconds`);
   console.log(`Score: ${diff*(conf.questions-sols+1)}`);
   console.log(`Position: ${position}`);
+  options();
 }
 
 async function save_final_score(sols:number, diff:number): Promise<any>{
-    let nScore:Scores = new Scores(conf.questions, conf.letters, diff, sols);
+    let nScore:Scores = new Scores(conf.letters, conf.questions,  diff, sols);
     let idCreated:number = parseInt(await scores_data.add_score(nScore));
     return idCreated;
 }
@@ -92,8 +94,34 @@ function settings(){
 
 }
 
-function feedback(){
+async function feedback(){
+  console.log("FEEDBACK MENU");
+  console.log("1) Top scores for current settings");
+  console.log("2) Recent scores for current settings");
+  console.log("3) Most errors");
+  console.log("4) Most corrects");
+  console.log("5) Recent errors");
+  console.log("6) Recent corrects");
+  console.log("7) Back to the main menu");
+  let opt: string = prompt_sync();
+  if(opt==="1") await show_top_similars();
+  else if(opt==="2") settings(); 
+  else if(opt==="3") feedback();
+  else if(opt==="4") feedback();
+  else if(opt==="5") feedback();
+  else if(opt==="6") feedback(); 
+  else {
+    options(); 
+    return;
+  }
+  console.log("press any key to go back to FEEDBACK menu...");
+  prompt_sync();
+  feedback();
+}
 
+async function show_top_similars(){
+  let list_similars: string = await scores_data.show_top_similars(conf.questions, conf.letters)+"";
+  console.log(list_similars);
 }
 
 start_main();
