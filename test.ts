@@ -14,15 +14,19 @@ async function start_main(){
   conf_data  = new Config_game_data();
   scores_data  = new Scores_data();
   questions_data  = new Questions_data();
-  conf = await conf_data.get_config_data();
+  await get_conf();
   console.log("WELCOME");
   options();
 };
 
+async function get_conf(){
+  conf = await conf_data.get_config_data();
+}
+
 async function options(){
   console.log(`Please choose an option
   1) play
-  2) setting
+  2) settings
   3) game feedback
   4) exit`);
               let opt: string = prompt_sync();
@@ -97,8 +101,39 @@ async function get_position(id:number): Promise<any>{
   return position;
 }
 
-function settings(){
+async function settings(){
+  console.log("SETTINGS");
+  console.log("1) Change N° of questions");
+  console.log("2) Change N° of letters");
+  console.log("3) Change N° of whitespaces");
+  console.log("4) Show current settings");
+  console.log("5) Main menu");
+  let opt: string = prompt_sync();
+  if(opt=='1') await update_settings('questions');
+  else if(opt=='2') await update_settings('letters');
+  else if(opt=='3') await update_settings('whitespaces');
+  else if(opt=='4') show_current_settings();
+  else {
+    options();
+    return;
+  }
+  console.log("press any key to go back to SETTINGS menu...");
+  prompt_sync();
+  settings();
+}
 
+async function update_settings(sett:string){
+  console.log(`how many ${sett}?: `);
+  let nValue: string = prompt_sync();
+  await conf_data.update_setting(BigInt(nValue), sett);
+  await get_conf();
+}
+
+function show_current_settings(){
+  console.log('CURRENT SETTINGS');
+  console.log(`Questions: ${conf.questions}`);
+  console.log(`Letters: ${conf.letters}`);
+  console.log(`Whitespaces: ${conf.whitespaces}`);
 }
 
 async function feedback(){
