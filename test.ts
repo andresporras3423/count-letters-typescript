@@ -150,8 +150,8 @@ async function feedback(){
   else if(opt==="2") await show_top_recents(); 
   else if(opt==="3") feedback();
   else if(opt==="4") feedback();
-  else if(opt==="5") feedback();
-  else if(opt==="6") feedback(); 
+  else if(opt==="5") await show_recents_questions(true);
+  else if(opt==="6") await show_recents_questions(false); 
   else {
     options(); 
     return;
@@ -162,13 +162,18 @@ async function feedback(){
 }
 
 async function show_top_scores(){
-  let list_similars: string = await scores_data.show_top_scores(conf.questions, conf.letters)+"";
+  const list_similars: string = await scores_data.show_top_scores(conf.questions, conf.letters)+"";
   console.log(list_similars);
 }
 
 async function show_top_recents(){
-  let list_recents: string = await scores_data.show_top_recents(conf.questions, conf.letters)+"";
+  const list_recents: string = await scores_data.show_top_recents(conf.questions, conf.letters)+"";
   console.log(list_recents);
+}
+
+async function show_recents_questions(state:boolean){
+  const recent_questions:string = await questions_data.show_recents_questions(state);
+  console.log(recent_questions);
 }
 
 start_main();
