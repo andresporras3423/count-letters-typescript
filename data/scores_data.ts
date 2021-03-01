@@ -56,7 +56,7 @@ export class Scores_data{
         return top_list;
     }
 
-    async show_top_recents(questions:number, letters:number): Promise<any>{
+    async show_recent_scores(questions:number, letters:number): Promise<any>{
         let c = new Connection();
         let promise = new Promise((resolve, reject) => {
             c.client.connect();

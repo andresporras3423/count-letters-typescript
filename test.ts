@@ -147,11 +147,11 @@ async function feedback(){
   console.log("7) Back to the main menu");
   let opt: string = prompt_sync();
   if(opt==="1") await show_top_scores();
-  else if(opt==="2") await show_top_recents(); 
-  else if(opt==="3") feedback();
-  else if(opt==="4") feedback();
-  else if(opt==="5") await show_recents_questions(true);
-  else if(opt==="6") await show_recents_questions(false); 
+  else if(opt==="2") await show_recent_scores(); 
+  else if(opt==="3") await show_top_questions(false);
+  else if(opt==="4") await show_top_questions(true);
+  else if(opt==="5") await show_recents_questions(false);
+  else if(opt==="6") await show_recents_questions(true); 
   else {
     options(); 
     return;
@@ -166,14 +166,19 @@ async function show_top_scores(){
   console.log(list_similars);
 }
 
-async function show_top_recents(){
-  const list_recents: string = await scores_data.show_top_recents(conf.questions, conf.letters)+"";
+async function show_recent_scores(){
+  const list_recents: string = await scores_data.show_recent_scores(conf.questions, conf.letters)+"";
   console.log(list_recents);
 }
 
 async function show_recents_questions(state:boolean){
   const recent_questions:string = await questions_data.show_recents_questions(state);
   console.log(recent_questions);
+}
+
+async function show_top_questions(state:boolean){
+  const top_questions:string = await questions_data.show_top_questions(state);
+  console.log(top_questions);
 }
 
 start_main();
